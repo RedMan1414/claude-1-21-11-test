@@ -21,7 +21,7 @@ public class PacketLoggerMixin {
 		String label = "[C2S] " + packet.type().id().getPath();
 		Minecraft mc = Minecraft.getInstance();
 		mc.execute(() -> {
-			if (mc.player != null && Claude12111TestClient.seenPackets.add(label)) {
+			if (mc.player != null) {
 				mc.player.displayClientMessage(Component.literal(label), false);
 			}
 		});
@@ -33,7 +33,7 @@ public class PacketLoggerMixin {
 		String label = "[S2C] " + packet.type().id().getPath();
 		Minecraft mc = Minecraft.getInstance();
 		mc.execute(() -> {
-			if (mc.player != null && Claude12111TestClient.seenPackets.add(label)) {
+			if (mc.player != null) {
 				mc.player.displayClientMessage(Component.literal(label), false);
 			}
 		});
