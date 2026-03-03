@@ -5,6 +5,9 @@
 	"mixins": [
 		"ExampleMixin"
 	],
+	"client": [
+		"PacketLoggerMixin"
+	],
 	"injectors": {
 		"defaultRequire": 1
 	},

@@ -10,7 +10,10 @@ import org.lwjgl.glfw.GLFW;
 
 public class Claude12111TestClient implements ClientModInitializer {
 
+	public static volatile boolean packetLoggerEnabled = false;
+
 	private static KeyMapping helloWorldKey;
+	private static KeyMapping packetLoggerKey;
 
 	@Override
 	public void onInitializeClient() {
@@ -21,10 +24,25 @@ public class Claude12111TestClient implements ClientModInitializer {
 			KeyMapping.Category.MISC
 		));
 
+		packetLoggerKey = KeyBindingHelper.registerKeyBinding(new KeyMapping(
+			"key.claude-12111-test.packet_logger",
+			InputConstants.Type.KEYSYM,
+			GLFW.GLFW_KEY_K,
+			KeyMapping.Category.MISC
+		));
+
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
 			while (helloWorldKey.consumeClick()) {
 				if (client.player != null) {
 					client.player.displayClientMessage(Component.literal("Hello, World!"), false);
+				}
+			}
+
+			while (packetLoggerKey.consumeClick()) {
+				packetLoggerEnabled = !packetLoggerEnabled;
+				if (client.player != null) {
+					String state = packetLoggerEnabled ? "§aenabled" : "§cdisabled";
+					client.player.displayClientMessage(Component.literal("Packet Logger " + state), false);
 				}
 			}
 		});

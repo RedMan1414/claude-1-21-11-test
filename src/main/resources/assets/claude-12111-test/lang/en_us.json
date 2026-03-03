@@ -1,3 +1,4 @@
 {
-  "key.claude-12111-test.hello_world": "Hello, World"
+  "key.claude-12111-test.hello_world": "Hello, World",
+  "key.claude-12111-test.packet_logger": "Packet Logger"
 }
