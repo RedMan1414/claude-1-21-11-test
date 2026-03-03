@@ -90,7 +90,6 @@ public class PacketLoggerScreen extends Screen {
 					} else {
 						Claude12111TestClient.excludedPackets.add(label);
 					}
-					btn.setMessage(toggleText(label));
 				}).pos(0, 0).size(60, 16).build();
 			}
 
@@ -104,6 +103,8 @@ public class PacketLoggerScreen extends Screen {
 				int y = getContentY();
 				int w = getContentWidth();
 				int h = getContentHeight();
+
+				toggleButton.setMessage(toggleText(label));
 
 				labelWidget.setX(x + 4);
 				labelWidget.setY(y + (h - 9) / 2);
