@@ -8,12 +8,19 @@ import net.minecraft.client.KeyMapping;
 import net.minecraft.network.chat.Component;
 import org.lwjgl.glfw.GLFW;
 
+import java.util.HashSet;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+
 public class Claude12111TestClient implements ClientModInitializer {
 
 	public static volatile boolean packetLoggerEnabled = false;
+	public static final Set<String> knownPackets = ConcurrentHashMap.newKeySet();
+	public static final Set<String> excludedPackets = new HashSet<>();
 
 	private static KeyMapping helloWorldKey;
 	private static KeyMapping packetLoggerKey;
+	private static KeyMapping packetFilterKey;
 
 	@Override
 	public void onInitializeClient() {
@@ -31,6 +38,13 @@ public class Claude12111TestClient implements ClientModInitializer {
 			KeyMapping.Category.MISC
 		));
 
+		packetFilterKey = KeyBindingHelper.registerKeyBinding(new KeyMapping(
+			"key.claude-12111-test.packet_filter",
+			InputConstants.Type.KEYSYM,
+			GLFW.GLFW_KEY_J,
+			KeyMapping.Category.MISC
+		));
+
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
 			while (helloWorldKey.consumeClick()) {
 				if (client.player != null) {
@@ -44,6 +58,10 @@ public class Claude12111TestClient implements ClientModInitializer {
 					String state = packetLoggerEnabled ? "§aenabled" : "§cdisabled";
 					client.player.displayClientMessage(Component.literal("Packet Logger " + state), false);
 				}
+			}
+
+			while (packetFilterKey.consumeClick()) {
+				client.setScreen(new PacketLoggerScreen());
 			}
 		});
 	}

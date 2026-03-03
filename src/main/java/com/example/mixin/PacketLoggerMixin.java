@@ -17,11 +17,13 @@ public class PacketLoggerMixin {
 
 	@Inject(method = "sendPacket", at = @At("HEAD"))
 	private void onSendPacket(Packet<?> packet, ChannelFutureListener listener, boolean flush, CallbackInfo ci) {
-		if (!Claude12111TestClient.packetLoggerEnabled) return;
 		String label = "[C2S] " + packet.type().id().getPath();
 		Minecraft mc = Minecraft.getInstance();
 		mc.execute(() -> {
-			if (mc.player != null) {
+			Claude12111TestClient.knownPackets.add(label);
+			if (Claude12111TestClient.packetLoggerEnabled
+					&& !Claude12111TestClient.excludedPackets.contains(label)
+					&& mc.player != null) {
 				mc.player.displayClientMessage(Component.literal(label), false);
 			}
 		});
@@ -29,11 +31,13 @@ public class PacketLoggerMixin {
 
 	@Inject(method = "channelRead0", at = @At("HEAD"))
 	private void onChannelRead0(ChannelHandlerContext ctx, Packet<?> packet, CallbackInfo ci) {
-		if (!Claude12111TestClient.packetLoggerEnabled) return;
 		String label = "[S2C] " + packet.type().id().getPath();
 		Minecraft mc = Minecraft.getInstance();
 		mc.execute(() -> {
-			if (mc.player != null) {
+			Claude12111TestClient.knownPackets.add(label);
+			if (Claude12111TestClient.packetLoggerEnabled
+					&& !Claude12111TestClient.excludedPackets.contains(label)
+					&& mc.player != null) {
 				mc.player.displayClientMessage(Component.literal(label), false);
 			}
 		});
