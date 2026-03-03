@@ -8,9 +8,13 @@ import net.minecraft.client.KeyMapping;
 import net.minecraft.network.chat.Component;
 import org.lwjgl.glfw.GLFW;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class Claude12111TestClient implements ClientModInitializer {
 
 	public static volatile boolean packetLoggerEnabled = false;
+	public static final Set<String> seenPackets = new HashSet<>();
 
 	private static KeyMapping helloWorldKey;
 	private static KeyMapping packetLoggerKey;
@@ -40,6 +44,7 @@ public class Claude12111TestClient implements ClientModInitializer {
 
 			while (packetLoggerKey.consumeClick()) {
 				packetLoggerEnabled = !packetLoggerEnabled;
+				seenPackets.clear();
 				if (client.player != null) {
 					String state = packetLoggerEnabled ? "§aenabled" : "§cdisabled";
 					client.player.displayClientMessage(Component.literal("Packet Logger " + state), false);
