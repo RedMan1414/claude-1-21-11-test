@@ -4,6 +4,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.ObjectSelectionList;
 import net.minecraft.client.gui.components.StringWidget;
 import net.minecraft.client.gui.screens.Screen;
@@ -16,6 +17,7 @@ import java.util.function.Consumer;
 public class PacketLoggerScreen extends Screen {
 
 	private PacketList list;
+	private EditBox searchBox;
 
 	public PacketLoggerScreen() {
 		super(Component.literal("Packet Logger - Filter"));
@@ -23,7 +25,13 @@ public class PacketLoggerScreen extends Screen {
 
 	@Override
 	protected void init() {
-		list = new PacketList(minecraft, width, height - 64, 32, 20);
+		searchBox = new EditBox(font, width / 2 - 100, 28, 200, 20, Component.literal("Search"));
+		searchBox.setHint(Component.literal("Search packets..."));
+		searchBox.setResponder(query -> list.filter(query));
+		addRenderableWidget(searchBox);
+		setInitialFocus(searchBox);
+
+		list = new PacketList(minecraft, width, height - 64, 54, 20);
 		addRenderableWidget(list);
 
 		addRenderableWidget(Button.builder(Component.literal("Done"), btn -> onClose())
@@ -45,12 +53,24 @@ public class PacketLoggerScreen extends Screen {
 
 	private static class PacketList extends ObjectSelectionList<PacketList.PacketEntry> {
 
+		private final List<String> allLabels;
+
 		PacketList(Minecraft mc, int width, int height, int y, int itemHeight) {
 			super(mc, width, height, y, itemHeight);
-			List<String> sorted = new ArrayList<>(Claude12111TestClient.knownPackets);
-			sorted.sort(String::compareTo);
-			for (String label : sorted) {
+			allLabels = new ArrayList<>(Claude12111TestClient.knownPackets);
+			allLabels.sort(String::compareTo);
+			for (String label : allLabels) {
 				addEntry(new PacketEntry(label));
+			}
+		}
+
+		void filter(String query) {
+			clearEntries();
+			String lower = query.toLowerCase();
+			for (String label : allLabels) {
+				if (label.toLowerCase().contains(lower)) {
+					addEntry(new PacketEntry(label));
+				}
 			}
 		}
 
