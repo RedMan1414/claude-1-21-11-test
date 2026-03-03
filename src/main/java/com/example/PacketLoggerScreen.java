@@ -5,6 +5,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.ObjectSelectionList;
+import net.minecraft.client.gui.components.StringWidget;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
@@ -56,10 +57,13 @@ public class PacketLoggerScreen extends Screen {
 		static class PacketEntry extends ObjectSelectionList.Entry<PacketEntry> {
 
 			private final String label;
+			private final StringWidget labelWidget;
 			private final Button toggleButton;
 
 			PacketEntry(String label) {
 				this.label = label;
+				Minecraft mc = Minecraft.getInstance();
+				this.labelWidget = new StringWidget(0, 0, 200, 9, Component.literal(label), mc.font);
 				this.toggleButton = Button.builder(toggleText(label), btn -> {
 					if (Claude12111TestClient.excludedPackets.contains(label)) {
 						Claude12111TestClient.excludedPackets.remove(label);
@@ -79,14 +83,21 @@ public class PacketLoggerScreen extends Screen {
 				int x = getContentX();
 				int y = getContentY();
 				int w = getContentWidth();
-				graphics.drawString(Minecraft.getInstance().font, label, x + 4, y + 4, 0xFFFFFF, false);
+				int h = getContentHeight();
+
+				labelWidget.setX(x + 4);
+				labelWidget.setY(y + (h - 9) / 2);
+				labelWidget.setWidth(w - 72);
+				labelWidget.render(graphics, mouseX, mouseY, delta);
+
 				toggleButton.setX(x + w - 64);
-				toggleButton.setY(y + 1);
+				toggleButton.setY(y + (h - 16) / 2);
 				toggleButton.render(graphics, mouseX, mouseY, delta);
 			}
 
 			@Override
 			public void visitWidgets(Consumer<AbstractWidget> consumer) {
+				consumer.accept(labelWidget);
 				consumer.accept(toggleButton);
 			}
 
