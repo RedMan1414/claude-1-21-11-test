@@ -17,6 +17,9 @@
 	"entrypoints": {
 		"main": [
 			"com.example.Claude12111Test"
+		],
+		"client": [
+			"com.example.Claude12111TestClient"
 		]
 	},
 	"mixins": [
